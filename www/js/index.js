@@ -16,172 +16,315 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-var app = {
-    // Application Constructor
-    initialize: function() {
-        this.bindEvents();
-    },
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
-    },
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        app.receivedEvent('deviceready');
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        // var parentElement = document.getElementById(id);
-        // var listeningElement = parentElement.querySelector('.listening');
-        // var receivedElement = parentElement.querySelector('.received');
+// var app = {
+//     // Application Constructor
+//     initialize: function() {
+//         this.bindEvents();
+//     },
+//     // Bind Event Listeners
+//     //
+//     // Bind any events that are required on startup. Common events are:
+//     // 'load', 'deviceready', 'offline', and 'online'.
+//     bindEvents: function() {
+//         document.addEventListener('deviceready', this.onDeviceReady, false);
+//     },
+//     // deviceready Event Handler
+//     //
+//     // The scope of 'this' is the event. In order to call the 'receivedEvent'
+//     // function, we must explicitly call 'app.receivedEvent(...);'
+//     onDeviceReady: function() {
+//         app.receivedEvent('deviceready');
+//     },
+//     // Update DOM on a Received Event
+//     receivedEvent: function(id) {
+//         // var parentElement = document.getElementById(id);
+//         // var listeningElement = parentElement.querySelector('.listening');
+//         // var receivedElement = parentElement.querySelector('.received');
 
-        // listeningElement.setAttribute('style', 'display:none;');
-        // receivedElement.setAttribute('style', 'display:block;');
+//         // listeningElement.setAttribute('style', 'display:none;');
+//         // receivedElement.setAttribute('style', 'display:block;');
 
-        // console.log('Received Event: ' + id);
+//         // console.log('Received Event: ' + id);
+//     }
+// };
 
-
-                //Initializing the canvas
-                var canvas ,ctx;
-                //Canvas dimensions
-                var W = 500; var H = 500;
-                var exlosions =[];
-
-                    console.log("init");
-                    canvas = document.getElementById("canvas");
-                    ctx = canvas.getContext("2d");
-                    for(var i=0;i<2;i++){
-                        var point = {};
-                        if (i==0) {
-                        point.x = 100;
-                        point.y = 100;  
-                        }else{
-                            point.x = 400;
-                            point.y = 400;
-                        }
-                        
-                        exlosions.push(explosion(point,20*(i+1),10));   
-                    }   
-                    setInterval(scene, 33);
+// app.initialize();
 
 
-                function scene()
-                {
-                        ctx.globalCompositeOperation = "source-over";
-                        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
-                        ctx.fillRect(0, 0, W, H);
-                        
-                        //Lets blend the particle with the BG
-                        ctx.globalCompositeOperation = "lighter";
-                    for (var i = 0;i<exlosions.length ; i++) {
-                        var exp = exlosions[i];
-                        exp.draw();
-                    }
-                }
-                function explosion(epicenter,radius,particles_count)
-                {
-                    var I={};
-                    I.x = epicenter.x;
-                    I.y = epicenter.y;
-                    I.radius = radius;
-                    I.particles_count =particles_count;
-                    I.particles = [];
-                    var fill_particle = function()
-                    {
-                        var pcount = I.particles_count - I.particles.length;
-                        for(var i = 0; i < pcount; i++)
-                        {
-                            I.particles.push(new I.particle_item(I.x,I.y,10));
-                        }
-                    }
-                    
-                    I.particle_item = function(x,y,lenght){
-                        this.x = x;
-                        this.y = y;
-                        this.status = 1;
-                    //Lets add random velocity to each particle
-                        this.vx = Math.random()*lenght-lenght/2;
-                        this.vy = Math.random()*lenght-lenght/2;
-                    //Random colors
-                        var r = Math.random()*255>>0;
-                        var g = Math.random()*255>>0;
-                        var b = Math.random()*255>>0;
-                        this.color = "rgba("+r+", "+g+", "+b+", 0.5)";
-                    //Random size
-                        this.radius = Math.random()*lenght+lenght;
-                    }
-                    I.draw = function(){
-                        /*
-                        ctx.globalCompositeOperation = "source-over";
-                        ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
-                        ctx.fillRect(0, 0, W, H);
-                        
-                        //Lets blend the particle with the BG
-                        ctx.globalCompositeOperation = "lighter";
-                        */
-                        //Lets draw particles from the array now
-                        for(var t = 0; t < I.particles.length; t++)
-                        {
-                            var p = I.particles[t];
-                            
-                            ctx.beginPath();
-                            
-                            //Time for some colors
-                            var gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-                            gradient.addColorStop(0, "white");
-                            gradient.addColorStop(0.4, "white");
-                            gradient.addColorStop(0.4, p.color);
-                            gradient.addColorStop(1, "black");
-                            
-                            ctx.fillStyle = gradient;
-                            ctx.arc(p.x, p.y, p.radius, Math.PI*2, false);
-                            ctx.fill();
-                            
-                            //Lets use the velocity now
-                            p.radius--;
-                            p.x += p.vx;
-                            p.y += p.vy;
-                            
-                            //To prevent the balls from moving out of the canvas
-                            /*
-                            if(p.x < -50) p.x = W+50;
-                            if(p.y < -50) p.y = H+50;
-                            if(p.x > W+50) p.x = -50;
-                            if(p.y > H+50) p.y = -50;
-                            */
-                            if(p.x < I.x-I.radius||
-                                p.x > I.x+I.radius|| 
-                                p.y < I.y-I.radius||
-                                p.y > I.x+I.radius||
-                                p.radius<3)
-                            {
-                                 p.status = 0;   
-                            }
-                        }
-                        I.particles = I.particles.filter(function(item) {
-                                return item.status==1;
-                              });
-                        if(I.particles.length < 3)
-                        {
-                            fill_particle();
-                        }
-                    }
-                        
-                    
-                    fill_particle();
-                    
-                    return I;
-                }
+// 
+// Here is how to define your module 
+// has dependent on mobile-angular-ui
+// 
+var app = angular.module('MobileAngularUiExamples', [
+  'ngRoute',
+  'mobile-angular-ui',
+  
+  // touch/drag feature: this is from 'mobile-angular-ui.gestures.js'
+  // it is at a very beginning stage, so please be careful if you like to use
+  // in production. This is intended to provide a flexible, integrated and and 
+  // easy to use alternative to other 3rd party libs like hammer.js, with the
+  // final pourpose to integrate gestures into default ui interactions like 
+  // opening sidebars, turning switches on/off ..
+  'mobile-angular-ui.gestures'
+]);
 
+// 
+// You can configure ngRoute as always, but to take advantage of SharedState location
+// feature (i.e. close sidebar on backbutton) you should setup 'reloadOnSearch: false' 
+// in order to avoid unwanted routing.
+// 
+app.config(function($routeProvider) {
+  $routeProvider.when('/',              {templateUrl: 'home.html', reloadOnSearch: false});
+  $routeProvider.when('/scroll',        {templateUrl: 'scroll.html', reloadOnSearch: false}); 
+  $routeProvider.when('/toggle',        {templateUrl: 'toggle.html', reloadOnSearch: false}); 
+  $routeProvider.when('/tabs',          {templateUrl: 'tabs.html', reloadOnSearch: false}); 
+  $routeProvider.when('/accordion',     {templateUrl: 'accordion.html', reloadOnSearch: false}); 
+  $routeProvider.when('/overlay',       {templateUrl: 'overlay.html', reloadOnSearch: false}); 
+  $routeProvider.when('/forms',         {templateUrl: 'forms.html', reloadOnSearch: false});
+  $routeProvider.when('/dropdown',      {templateUrl: 'dropdown.html', reloadOnSearch: false});
+  $routeProvider.when('/drag',          {templateUrl: 'drag.html', reloadOnSearch: false});
+  $routeProvider.when('/carousel',      {templateUrl: 'carousel.html', reloadOnSearch: false});
+});
 
+//
+// `$drag` example: drag to dismiss
+//
+app.directive('dragToDismiss', function($drag, $parse, $timeout){
+  return {
+    restrict: 'A',
+    compile: function(elem, attrs) {
+      var dismissFn = $parse(attrs.dragToDismiss);
+      return function(scope, elem, attrs){
+        var dismiss = false;
 
+        $drag.bind(elem, {
+          constraint: {
+            minX: 0, 
+            minY: 0, 
+            maxY: 0 
+          },
+          move: function(c) {
+            if( c.left >= c.width / 4) {
+              dismiss = true;
+              elem.addClass('dismiss');
+            } else {
+              dismiss = false;
+              elem.removeClass('dismiss');
+            }
+          },
+          cancel: function(){
+            elem.removeClass('dismiss');
+          },
+          end: function(c, undo, reset) {
+            if (dismiss) {
+              elem.addClass('dismitted');
+              $timeout(function() { 
+                scope.$apply(function() {
+                  dismissFn(scope);  
+                });
+              }, 400);
+            } else {
+              reset();
+            }
+          }
+        });
+      };
     }
-};
+  };
+});
 
-app.initialize();
+//
+// Another `$drag` usage example: this is how you could create 
+// a touch enabled "deck of cards" carousel. See `carousel.html` for markup.
+//
+app.directive('carousel', function(){
+  return {
+    restrict: 'C',
+    scope: {},
+    controller: function($scope) {
+      this.itemCount = 0;
+      this.activeItem = null;
+
+      this.addItem = function(){
+        var newId = this.itemCount++;
+        this.activeItem = this.itemCount == 1 ? newId : this.activeItem;
+        return newId;
+      };
+
+      this.next = function(){
+        this.activeItem = this.activeItem || 0;
+        this.activeItem = this.activeItem == this.itemCount - 1 ? 0 : this.activeItem + 1;
+      };
+
+      this.prev = function(){
+        this.activeItem = this.activeItem || 0;
+        this.activeItem = this.activeItem === 0 ? this.itemCount - 1 : this.activeItem - 1;
+      };
+    }
+  };
+});
+
+app.directive('carouselItem', function($drag) {
+  return {
+    restrict: 'C',
+    require: '^carousel',
+    scope: {},
+    transclude: true,
+    template: '<div class="item"><div ng-transclude></div></div>',
+    link: function(scope, elem, attrs, carousel) {
+      scope.carousel = carousel;
+      var id = carousel.addItem();
+      
+      var zIndex = function(){
+        var res = 0;
+        if (id == carousel.activeItem){
+          res = 2000;
+        } else if (carousel.activeItem < id) {
+          res = 2000 - (id - carousel.activeItem);
+        } else {
+          res = 2000 - (carousel.itemCount - 1 - carousel.activeItem + id);
+        }
+        return res;
+      };
+
+      scope.$watch(function(){
+        return carousel.activeItem;
+      }, function(n, o){
+        elem[0].style['z-index']=zIndex();
+      });
+      
+
+      $drag.bind(elem, {
+        constraint: { minY: 0, maxY: 0 },
+        adaptTransform: function(t, dx, dy, x, y, x0, y0) {
+          var maxAngle = 15;
+          var velocity = 0.02;
+          var r = t.getRotation();
+          var newRot = r + Math.round(dx * velocity);
+          newRot = Math.min(newRot, maxAngle);
+          newRot = Math.max(newRot, -maxAngle);
+          t.rotate(-r);
+          t.rotate(newRot);
+        },
+        move: function(c){
+          if(c.left >= c.width / 4 || c.left <= -(c.width / 4)) {
+            elem.addClass('dismiss');  
+          } else {
+            elem.removeClass('dismiss');  
+          }          
+        },
+        cancel: function(){
+          elem.removeClass('dismiss');
+        },
+        end: function(c, undo, reset) {
+          elem.removeClass('dismiss');
+          if(c.left >= c.width / 4) {
+            scope.$apply(function() {
+              carousel.next();
+            });
+          } else if (c.left <= -(c.width / 4)) {
+            scope.$apply(function() {
+              carousel.next();
+            });
+          }
+          reset();
+        }
+      });
+    }
+  };
+});
+
+
+//
+// For this trivial demo we have just a unique MainController 
+// for everything
+//
+app.controller('MainController', function($rootScope, $scope){
+
+  // User agent displayed in home page
+  $scope.userAgent = navigator.userAgent;
+  
+  // Needed for the loading screen
+  $rootScope.$on('$routeChangeStart', function(){
+    $rootScope.loading = true;
+  });
+
+  $rootScope.$on('$routeChangeSuccess', function(){
+    $rootScope.loading = false;
+  });
+
+  // Fake text i used here and there.
+  $scope.lorem = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vel explicabo, aliquid eaque soluta nihil eligendi adipisci error, illum corrupti nam fuga omnis quod quaerat mollitia expedita impedit dolores ipsam. Obcaecati.';
+
+  // 
+  // 'Scroll' screen
+  // 
+  var scrollItems = [];
+
+  for (var i=1; i<=100; i++) {
+    scrollItems.push('Item ' + i);
+  }
+
+  $scope.scrollItems = scrollItems;
+
+  $scope.bottomReached = function() {
+    alert('Congrats you scrolled to the end of the list!');
+  }
+
+  // 
+  // Right Sidebar
+  // 
+  $scope.chatUsers = [
+    { name: 'Carlos  Flowers', online: true },
+    { name: 'Byron Taylor', online: true },
+    { name: 'Jana  Terry', online: true },
+    { name: 'Darryl  Stone', online: true },
+    { name: 'Fannie  Carlson', online: true },
+    { name: 'Holly Nguyen', online: true },
+    { name: 'Bill  Chavez', online: true },
+    { name: 'Veronica  Maxwell', online: true },
+    { name: 'Jessica Webster', online: true },
+    { name: 'Jackie  Barton', online: true },
+    { name: 'Crystal Drake', online: false },
+    { name: 'Milton  Dean', online: false },
+    { name: 'Joann Johnston', online: false },
+    { name: 'Cora  Vaughn', online: false },
+    { name: 'Nina  Briggs', online: false },
+    { name: 'Casey Turner', online: false },
+    { name: 'Jimmie  Wilson', online: false },
+    { name: 'Nathaniel Steele', online: false },
+    { name: 'Aubrey  Cole', online: false },
+    { name: 'Donnie  Summers', online: false },
+    { name: 'Kate  Myers', online: false },
+    { name: 'Priscilla Hawkins', online: false },
+    { name: 'Joe Barker', online: false },
+    { name: 'Lee Norman', online: false },
+    { name: 'Ebony Rice', online: false }
+  ];
+
+  //
+  // 'Forms' screen
+  //  
+  $scope.rememberMe = true;
+  $scope.email = 'me@example.com';
+  
+  $scope.login = function() {
+    alert('You submitted the login form');
+  };
+
+  // 
+  // 'Drag' screen
+  // 
+  $scope.notices = [];
+  
+  for (var j = 0; j < 10; j++) {
+    $scope.notices.push({icon: 'envelope', message: 'Notice ' + (j + 1) });
+  }
+
+  $scope.deleteNotice = function(notice) {
+    var index = $scope.notices.indexOf(notice);
+    if (index > -1) {
+      $scope.notices.splice(index, 1);
+    }
+  };
+});
