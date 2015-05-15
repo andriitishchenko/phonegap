@@ -75,6 +75,14 @@ var app = angular.module('MobileAngularUiExamples', [
 // 
 app.config(function($routeProvider) {
   $routeProvider.when('/',              {templateUrl: 'home.html', controller: 'HomeController', reloadOnSearch: false});
+  $routeProvider.when('/login',              {templateUrl: 'login.html', controller: 'LoginController', reloadOnSearch: false});
+  $routeProvider.when('/registration',              {templateUrl: 'registration.html', controller: 'RegistrationController', reloadOnSearch: false});
+  $routeProvider.when('/deals',              {templateUrl: 'deals.html', controller: 'DealsController', reloadOnSearch: false});
+  $routeProvider.when('/dealsdetailed/:id_deal',              {templateUrl: 'dealsdetailed.html', controller: 'DealDetailedController', reloadOnSearch: false});
+
+
+
+
   $routeProvider.when('/scroll',        {templateUrl: 'scroll.html', reloadOnSearch: false}); 
   $routeProvider.when('/toggle',        {templateUrl: 'toggle.html', reloadOnSearch: false}); 
   $routeProvider.when('/tabs',          {templateUrl: 'tabs.html', reloadOnSearch: false}); 
@@ -234,11 +242,6 @@ app.directive('carouselItem', function($drag) {
   };
 });
 
-
-//
-// For this trivial demo we have just a unique MainController 
-// for everything
-
 app.controller('HomeController', ['$scope', '$http',
   function ($scope, $http) {
     // $http.get('phones/phones.json').success(function(data) {
@@ -246,11 +249,30 @@ app.controller('HomeController', ['$scope', '$http',
     // });
 
     // $scope.orderProp = 'age';
-
     $scope.orderProp = 'age';    
-
   }]);
-//
+
+
+app.controller('LoginController', ['$scope', '$http', function ($scope, $http) {
+  
+  }]);
+
+app.controller('RegistrationController', ['$scope', '$http', function ($scope, $http) {
+    
+  }]);
+
+
+
+app.controller('DealsController', ['$scope', '$http', function ($scope, $http) {
+    
+  }]);
+
+app.controller('DealDetailedController', ['$scope', '$routeParams', function($scope, $routeParams) {
+      $scope.id_deal = $routeParams.id_deal;
+}]);
+
+
+
 app.controller('MainController', function($rootScope, $scope){
 
   // User agent displayed in home page
@@ -290,28 +312,7 @@ app.controller('MainController', function($rootScope, $scope){
     { name: 'Carlos  Flowers', online: true },
     { name: 'Byron Taylor', online: true },
     { name: 'Jana  Terry', online: true },
-    { name: 'Darryl  Stone', online: true },
-    { name: 'Fannie  Carlson', online: true },
-    { name: 'Holly Nguyen', online: true },
-    { name: 'Bill  Chavez', online: true },
-    { name: 'Veronica  Maxwell', online: true },
-    { name: 'Jessica Webster', online: true },
-    { name: 'Jackie  Barton', online: true },
-    { name: 'Crystal Drake', online: false },
-    { name: 'Milton  Dean', online: false },
-    { name: 'Joann Johnston', online: false },
-    { name: 'Cora  Vaughn', online: false },
-    { name: 'Nina  Briggs', online: false },
-    { name: 'Casey Turner', online: false },
-    { name: 'Jimmie  Wilson', online: false },
-    { name: 'Nathaniel Steele', online: false },
-    { name: 'Aubrey  Cole', online: false },
-    { name: 'Donnie  Summers', online: false },
-    { name: 'Kate  Myers', online: false },
-    { name: 'Priscilla Hawkins', online: false },
-    { name: 'Joe Barker', online: false },
-    { name: 'Lee Norman', online: false },
-    { name: 'Ebony Rice', online: false }
+
   ];
 
   //
