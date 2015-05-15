@@ -74,7 +74,7 @@ var app = angular.module('MobileAngularUiExamples', [
 // in order to avoid unwanted routing.
 // 
 app.config(function($routeProvider) {
-  $routeProvider.when('/',              {templateUrl: 'home.html', reloadOnSearch: false});
+  $routeProvider.when('/',              {templateUrl: 'home.html', controller: 'HomeController', reloadOnSearch: false});
   $routeProvider.when('/scroll',        {templateUrl: 'scroll.html', reloadOnSearch: false}); 
   $routeProvider.when('/toggle',        {templateUrl: 'toggle.html', reloadOnSearch: false}); 
   $routeProvider.when('/tabs',          {templateUrl: 'tabs.html', reloadOnSearch: false}); 
@@ -238,6 +238,18 @@ app.directive('carouselItem', function($drag) {
 //
 // For this trivial demo we have just a unique MainController 
 // for everything
+
+app.controller('HomeController', ['$scope', '$http',
+  function ($scope, $http) {
+    // $http.get('phones/phones.json').success(function(data) {
+    //   $scope.phones = data;
+    // });
+
+    // $scope.orderProp = 'age';
+
+    $scope.orderProp = 'age';    
+
+  }]);
 //
 app.controller('MainController', function($rootScope, $scope){
 
