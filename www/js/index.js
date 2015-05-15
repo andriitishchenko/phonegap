@@ -1,4 +1,10 @@
 /*
+
+START SERVER
+python -m SimpleHTTPServer 8080
+use Ripple  Chrome plugin
+
+
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -77,9 +83,13 @@ app.config(function($routeProvider) {
   $routeProvider.when('/',              {templateUrl: 'home.html', controller: 'HomeController', reloadOnSearch: false});
   $routeProvider.when('/login',              {templateUrl: 'login.html', controller: 'LoginController', reloadOnSearch: false});
   $routeProvider.when('/registration',              {templateUrl: 'registration.html', controller: 'RegistrationController', reloadOnSearch: false});
-  $routeProvider.when('/deals',              {templateUrl: 'deals.html', controller: 'DealsController', reloadOnSearch: false});
-  $routeProvider.when('/dealsdetailed/:id_deal',              {templateUrl: 'dealsdetailed.html', controller: 'DealDetailedController', reloadOnSearch: false});
+  $routeProvider.when('/deals',                     {templateUrl: 'deals.html', controller: 'DealsController', reloadOnSearch: false});
+  $routeProvider.when('/dealsdetailed/:id_deal',    {templateUrl: 'dealsdetailed.html', controller: 'DealDetailedController', reloadOnSearch: false});
 
+
+  $routeProvider.when('/my_deals',              {templateUrl: 'my_deals.html', controller: 'MyDealsController', reloadOnSearch: false});
+
+$routeProvider.when('/currency',                     {templateUrl: 'currency.html', controller: 'CurrencyController', reloadOnSearch: false});
 
 
 
@@ -97,6 +107,21 @@ app.config(function($routeProvider) {
 //
 // `$drag` example: drag to dismiss
 //
+app.directive('backButton', function(){
+    return {
+      restrict: 'A',
+
+      link: function(scope, element, attrs) {
+        element.bind('click', goBack);
+
+        function goBack() {
+          history.back();
+          scope.$apply();
+        }
+      }
+    }
+});
+
 app.directive('dragToDismiss', function($drag, $parse, $timeout){
   return {
     restrict: 'A',
@@ -255,17 +280,25 @@ app.controller('HomeController', ['$scope', '$http',
 
 app.controller('LoginController', ['$scope', '$http', function ($scope, $http) {
   
-  }]);
+}]);
 
 app.controller('RegistrationController', ['$scope', '$http', function ($scope, $http) {
     
-  }]);
+}]);
 
 
 
 app.controller('DealsController', ['$scope', '$http', function ($scope, $http) {
-    
-  }]);
+    $http.get('testjson/deals.json').success(function(data) {
+      $scope.datasource = data["data"];
+    });
+}]);
+
+app.controller('CurrencyController', ['$scope', '$http', function ($scope, $http) {
+    $http.get('testjson/currency.json').success(function(data) {
+      $scope.datasource = data["data"];
+    });
+}]);
 
 app.controller('DealDetailedController', ['$scope', '$routeParams', function($scope, $routeParams) {
       $scope.id_deal = $routeParams.id_deal;

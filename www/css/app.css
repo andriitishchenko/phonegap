@@ -190,3 +190,23 @@ pre {
 input.scrollable-header {
   border-bottom: 3px solid #ccc;
 }
+
+
+
+span.label_currency{
+width: 70px;  
+}
+span.label_currency_amount{
+  width: 70px;  
+  left: 140px;
+  right: 20px;
+  position: absolute;
+  display: inline-block;
+}
+div.label_currency_cource{
+  right: 20px;
+  position: absolute;
+  display: inline-block;
+}
+
+
