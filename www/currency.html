@@ -1,0 +1,21 @@
+<div ui-content-for="title">
+  <span>Currency</span>
+</div>
+
+<div class="scrollable" ui-state="searchBar">
+  <input
+    ng-if="Ui.active('searchBar')"
+    type="search"
+    class="form-control scrollable-header"
+    placeholder="Search.." />
+
+  <div class="scrollable-content" >
+      <ul class="list-group">
+        <li ng-repeat="item in datasource | orderBy:'cur'"  class="list-group-item">
+          <span class="label_currency">{{item.cur}}</span>
+          <span class="label_currency_amount">{{item.amount}}</span>
+          <div class="label_currency_cource">{{item.cource}}</div>
+        </li>
+      </ul>
+  </div>
+</div>
