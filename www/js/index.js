@@ -74,6 +74,193 @@ var app = angular.module('MobileAngularUiExamples', [
   'mobile-angular-ui.gestures'
 ]);
 
+app.constant('AUTH_EVENTS', {
+  loginSuccess: 'auth-login-success',
+  loginFailed: 'auth-login-failed',
+  logoutSuccess: 'auth-logout-success',
+  sessionTimeout: 'auth-session-timeout',
+  notAuthenticated: 'auth-not-authenticated',
+  notAuthorized: 'auth-not-authorized'
+});
+
+app.constant('USER_ROLES', {
+  all: '*',
+  user: 'user',
+  guest: 'guest'
+});
+
+app.service('Session', function () {
+  this.create = function (sessionId, userId, userRole, userToken) {
+    this.id = sessionId;
+    this.userId = userId;
+    this.userRole = userRole;
+    this.userToken = userToken;
+  };
+  this.destroy = function () {
+    this.id = null;
+    this.userId = null;
+    this.userRole = null;
+    this.userToken = null;
+  };
+});
+
+app.factory('AuthService', function ($http, Session) {
+  var authService = {};
+ 
+  authService.login = function (credentials) {
+    return $http
+      .post('/login', credentials)
+      .then(function (res) {
+        Session.create(res.data.id, res.data.user.id, res.data.user.role, res.data.user.token);
+        return res.data.user;
+      });
+  };
+ 
+  // authService.isAuthenticated = function () {
+  //   return !!Session.userId;
+  // };
+ 
+  // authService.isAuthorized = function (authorizedRoles) {
+  //   if (!angular.isArray(authorizedRoles)) {
+  //     authorizedRoles = [authorizedRoles];
+  //   }
+  //   return (authService.isAuthenticated() &&
+  //     authorizedRoles.indexOf(Session.userRole) !== -1);
+  // };
+ 
+  return authService;
+});
+
+// app.factory('NetworkService', function ($http, Session) {
+//   var networkService = {};
+ 
+//   networkService.dealsList = function (time) {
+//     return [{'id':1}];
+//   };
+ 
+//   networkService.currencysList = function () {
+//     return [{'id':1}];
+//   };
+ 
+//   networkService.messagesList = function (time) {
+//     return [{'id':1}];
+//   };
+
+//   networkService.newDeal = function (time) {
+//     return [{'id':1}];
+//   };
+ 
+//   return networkService;
+// });
+
+// app.factory('Book', ['$http', function($http) {  
+//      function Book(bookData) {  
+//           if (bookData) {  
+//                this.setData(bookData):  
+//           }  
+//           //что-то, что еще нужно для инициализации книги
+//      };       
+//      Book.prototype = {  
+//           setData: function(bookData) {  
+//                angular.extend(this, bookData);  
+//           },  
+//           load: function(id) {  
+//                var scope = this;  
+//                $http.get('ourserver/books/' + bookId).success(function(bookData) {  
+//                     scope.setData(bookData);  
+//                });  
+//           },  
+//           delete: function() {  
+//                $http.delete('ourserver/books/' + bookId);  
+//           },  
+//           update: function() {  
+//                $http.put('ourserver/books/' + bookId, this);  
+//           },  
+//           getImageUrl: function(width, height) {  
+//                return 'our/image/service/' + this.book.id + '/width/height';  
+//           },  
+//           isAvailable: function() {  
+//                if (!this.book.stores || this.book.stores.length === 0) {  
+//                     return false;  
+//                }  
+//                return this.book.stores.some(function(store) {  
+//                     return store.quantity > 0;  
+//                });  
+//           }  
+//      };  
+//      return Book; 
+// }]);
+
+// app.factory('booksManager', ['$http', '$q', 'Book', function($http, $q, Book) {  
+//      var booksManager = {  
+//           _pool: {}, 
+//            _retrieveInstance: function(bookId, bookData) {  
+//                var instance = this._pool[bookId];   
+//                if (instance) {  
+//                     instance.setData(bookData);  
+//                } else {  
+//                     instance = new Book(bookData);  
+//                     this._pool[bookId] = instance;  
+//                }   
+//                return instance;  
+//           },  
+//           _search: function(bookId) {  
+//                return this._pool[bookId];  
+//           },       
+//           _load: function(bookId, deferred) {  
+//                var scope = this;  
+//                $http.get('ourserver/books/' + bookId)  
+//                     .success(function(bookData) {  
+//                          var book = scope._retrieveInstance(bookData.id, bookData);  
+//                          deferred.resolve(book);  
+//                     })  
+//                     .error(function() {  
+//                          deferred.reject();  
+//                     });  }, 
+//           /*Публичные методы*/ 
+//           /* Получение книги по идентификатору*/  
+//           getBook: function(bookId) {  
+//                var deferred = $q.defer();  
+//                var book = this._search(bookId);  
+//                if (book) {  
+//                     deferred.resolve(book);  
+//                } else {  
+//                     this._load(bookId, deferred);  
+//                }  return deferred.promise;  
+//           },  
+//           /* Получение списка книг */  
+//           loadAllBooks: function() {  
+//                var deferred = $q.defer();  
+//                var scope = this;  
+//                $http.get('ourserver/books')  
+//                     .success(function(booksArray) {  
+//                          var books = [];  
+//                          booksArray.forEach(function(bookData) {  
+//                               var book = scope._retrieveInstance(bookData.id, bookData);  
+//                               books.push(book);  
+//                          });   
+//                          deferred.resolve(books);  
+//                     })  
+//                     .error(function() {  
+//                          deferred.reject();  
+//                     });  
+//                     return deferred.promise;  
+//                },  
+//           /* Редактирование книги*/  
+//           setBook: function(bookData) {  
+//                var scope = this;  
+//                var book = this._search(bookData.id);  
+//                if (book) {  
+//                     book.setData(bookData);  
+//                } else {  
+//                     book = scope._retrieveInstance(bookData);  
+//                }  return book;  
+//           },   
+//      };  
+//      return booksManager; 
+// }]);
+
+
 // 
 // You can configure ngRoute as always, but to take advantage of SharedState location
 // feature (i.e. close sidebar on backbutton) you should setup 'reloadOnSearch: false' 
@@ -81,27 +268,28 @@ var app = angular.module('MobileAngularUiExamples', [
 // 
 app.config(function($routeProvider) {
   $routeProvider.when('/',              {templateUrl: 'home.html', controller: 'HomeController', reloadOnSearch: false});
-  $routeProvider.when('/login',              {templateUrl: 'login.html', controller: 'LoginController', reloadOnSearch: false});
-  $routeProvider.when('/registration',              {templateUrl: 'registration.html', controller: 'RegistrationController', reloadOnSearch: false});
-  $routeProvider.when('/deals',                     {templateUrl: 'deals.html', controller: 'DealsController', reloadOnSearch: false});
-  $routeProvider.when('/dealsdetailed/:id_deal',    {templateUrl: 'dealsdetailed.html', controller: 'DealDetailedController', reloadOnSearch: false});
+  $routeProvider.when('/login',         {templateUrl: 'login.html', controller: 'LoginController', reloadOnSearch: false});
+  $routeProvider.when('/registration',  {templateUrl: 'registration.html', controller: 'RegistrationController', reloadOnSearch: false});
+  $routeProvider.when('/deals',         {templateUrl: 'deals.html', controller: 'DealsController', reloadOnSearch: false});
+  $routeProvider.when('/dealsdetailed/:id_deal',    
+                                        {templateUrl: 'dealsdetailed.html', controller: 'DealDetailedController', reloadOnSearch: false});
 
 
-  $routeProvider.when('/my_deals',              {templateUrl: 'my_deals.html', controller: 'MyDealsController', reloadOnSearch: false});
+  $routeProvider.when('/my_deals',      {templateUrl: 'my_deals.html', controller: 'MyDealsController', reloadOnSearch: false});
 
-$routeProvider.when('/currency',                     {templateUrl: 'currency.html', controller: 'CurrencyController', reloadOnSearch: false});
+  $routeProvider.when('/currency',      {templateUrl: 'currency.html', controller: 'CurrencyController', reloadOnSearch: false});
 
 
 
-  $routeProvider.when('/scroll',        {templateUrl: 'scroll.html', reloadOnSearch: false}); 
-  $routeProvider.when('/toggle',        {templateUrl: 'toggle.html', reloadOnSearch: false}); 
-  $routeProvider.when('/tabs',          {templateUrl: 'tabs.html', reloadOnSearch: false}); 
-  $routeProvider.when('/accordion',     {templateUrl: 'accordion.html', reloadOnSearch: false}); 
-  $routeProvider.when('/overlay',       {templateUrl: 'overlay.html', reloadOnSearch: false}); 
-  $routeProvider.when('/forms',         {templateUrl: 'forms.html', reloadOnSearch: false});
-  $routeProvider.when('/dropdown',      {templateUrl: 'dropdown.html', reloadOnSearch: false});
-  $routeProvider.when('/drag',          {templateUrl: 'drag.html', reloadOnSearch: false});
-  $routeProvider.when('/carousel',      {templateUrl: 'carousel.html', reloadOnSearch: false});
+  // $routeProvider.when('/scroll',        {templateUrl: 'scroll.html', reloadOnSearch: false}); 
+  // $routeProvider.when('/toggle',        {templateUrl: 'toggle.html', reloadOnSearch: false}); 
+  // $routeProvider.when('/tabs',          {templateUrl: 'tabs.html', reloadOnSearch: false}); 
+  // $routeProvider.when('/accordion',     {templateUrl: 'accordion.html', reloadOnSearch: false}); 
+  // $routeProvider.when('/overlay',       {templateUrl: 'overlay.html', reloadOnSearch: false}); 
+  // $routeProvider.when('/forms',         {templateUrl: 'forms.html', reloadOnSearch: false});
+  // $routeProvider.when('/dropdown',      {templateUrl: 'dropdown.html', reloadOnSearch: false});
+  // $routeProvider.when('/drag',          {templateUrl: 'drag.html', reloadOnSearch: false});
+  // $routeProvider.when('/carousel',      {templateUrl: 'carousel.html', reloadOnSearch: false});
 });
 
 //
@@ -266,6 +454,10 @@ app.directive('carouselItem', function($drag) {
     }
   };
 });
+
+
+
+
 
 app.controller('HomeController', ['$scope', '$http',
   function ($scope, $http) {
