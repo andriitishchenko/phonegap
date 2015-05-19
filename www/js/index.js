@@ -131,27 +131,38 @@ app.factory('AuthService', function ($http, Session) {
   return authService;
 });
 
-app.service('NetworkService', function ($q, $http) {
+app.factory('NetworkService', function ($q, $http) {
   var networkService = {};
   var API_URL = 'http://beepex.parseapp.com/';
+  var deferred = $q.defer();
+  
 
   function apiCall(method, params) {
-      var deferred = $q.defer();
-      var cache = deferred.promise;
+    var cache = deferred.promise;
+    $http.get(
+      'testjson'+method+'.json'
+      // API_URL+"feed"
+      ,params).success(function(response) {
+      // $scope.datasource = data["data"];
+      deferred.resolve(response);
+    });
+
+//////////////////////////
+    //   
       
-      // Merge params
-      // e.g. some tokens/keys may exist in default params
-      var data = {params: angular.extend({}, params)};
+    //   // Merge params
+    //   // e.g. some tokens/keys may exist in default params
+    //   var data = {params: angular.extend({}, params)};
       
-      // Process request
-      $http.get(API_URL + method, data).then(function(response) {
-        deferred.resolve(response);
-      });
+    //   // Process request
+    //   $http.get(API_URL + method, data).then(function(response) {
+    //     deferred.resolve(response);
+    //   });
     return cache;
   }
 
   networkService.dealsList = function (time) {
-    return apiCall('feed');
+    return apiCall('/deals',time);
   };
  
   networkService.currencysList = function () {
@@ -475,20 +486,15 @@ app.directive('carouselItem', function($drag) {
 
 
 
-app.controller('HomeController', ['$scope', 'NetworkService',
-  function ($scope, NetworkService) {
-    // $http.get('phones/phones.json').success(function(data) {
-    //   $scope.phones = data;
-    // });
-
-    // $scope.orderProp = 'age';
+app.controller('HomeController', 
+  //['$scope', '$http', function ($scope, $http) {
+  ['$scope', 'NetworkService', function ($scope, NetworkService) {  
     $scope.orderProp = 'age';    
 
-    var vm = this;
+    var vm = $scope;
   
   NetworkService.dealsList().then(function(resp) {
-    Console.log(111);
-    vm.datasource = resp;
+    vm.datasource = resp["data"];
   });
 
 
