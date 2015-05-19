@@ -131,27 +131,43 @@ app.factory('AuthService', function ($http, Session) {
   return authService;
 });
 
-// app.factory('NetworkService', function ($http, Session) {
-//   var networkService = {};
- 
-//   networkService.dealsList = function (time) {
-//     return [{'id':1}];
-//   };
- 
-//   networkService.currencysList = function () {
-//     return [{'id':1}];
-//   };
- 
-//   networkService.messagesList = function (time) {
-//     return [{'id':1}];
-//   };
+app.service('NetworkService', function ($q, $http) {
+  var networkService = {};
+  var API_URL = 'http://beepex.parseapp.com/';
 
-//   networkService.newDeal = function (time) {
-//     return [{'id':1}];
-//   };
+  function apiCall(method, params) {
+      var deferred = $q.defer();
+      var cache = deferred.promise;
+      
+      // Merge params
+      // e.g. some tokens/keys may exist in default params
+      var data = {params: angular.extend({}, params)};
+      
+      // Process request
+      $http.get(API_URL + method, data).then(function(response) {
+        deferred.resolve(response);
+      });
+    return cache;
+  }
+
+  networkService.dealsList = function (time) {
+    return apiCall('feed');
+  };
  
-//   return networkService;
-// });
+  networkService.currencysList = function () {
+    return [{'id':1}];
+  };
+ 
+  networkService.messagesList = function (time) {
+    return [{'id':1}];
+  };
+
+  networkService.newDeal = function (time) {
+    return [{'id':1}];
+  };
+ 
+  return networkService;
+});
 
 // app.factory('Book', ['$http', function($http) {  
 //      function Book(bookData) {  
@@ -459,14 +475,23 @@ app.directive('carouselItem', function($drag) {
 
 
 
-app.controller('HomeController', ['$scope', '$http',
-  function ($scope, $http) {
+app.controller('HomeController', ['$scope', 'NetworkService',
+  function ($scope, NetworkService) {
     // $http.get('phones/phones.json').success(function(data) {
     //   $scope.phones = data;
     // });
 
     // $scope.orderProp = 'age';
     $scope.orderProp = 'age';    
+
+    var vm = this;
+  
+  NetworkService.dealsList().then(function(resp) {
+    Console.log(111);
+    vm.datasource = resp;
+  });
+
+
   }]);
 
 
